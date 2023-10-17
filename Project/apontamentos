@@ -1,0 +1,52 @@
+-------------------
+4_2_3
+
+primeira iteracao
+esta iteracao tem de concordar com os indices de acesso ao arr na macro acessMat
+
+accessMat( surface, 1, 1 ) = ( accessMat( surfaceCopy, 0, 1 ) +
+				accessMat( surfaceCopy, 2, 1 ) +
+				accessMat( surfaceCopy, 1, 0 ) +
+				accessMat( surfaceCopy, 1, 2 ) ) / 4;
+2unda
+accessMat( surface, 1, 2 ) = ( accessMat( surfaceCopy, 0, 2 ) +
+				accessMat( surfaceCopy, 2, 2 ) +
+				accessMat( surfaceCopy, 1, 1 ) +
+				accessMat( surfaceCopy, 1, 3 ) ) / 4;	
+				
+3eira
+accessMat( surface, 1, 3 ) = ( accessMat( surfaceCopy, 0, 3 ) +
+				accessMat( surfaceCopy, 2, 3 ) +
+				accessMat( surfaceCopy, 1, 2 ) +
+				accessMat( surfaceCopy, 1, 4 ) ) / 4;	
+				
+de fora
+accessMat( surface, 2, 1 ) = ( accessMat( surfaceCopy, 1, 1 ) +
+				accessMat( surfaceCopy, 3, 1 ) +
+				accessMat( surfaceCopy, 2, 0 ) +
+				accessMat( surfaceCopy, 2, 2 ) ) / 4;
+
+As escritas na surface nao tem dependencias porque escreve sempre em zonas diferentes em i,j
+no surfaceCopy so existem read-after-read
+
+1 tentativa - set num threads 5
+		pragam ...... for private j
+		69 sem o3 vs 94, 8.2 com o3 vs 10
+-Experimentamos com o collapse deu igual ou pior que sem paralelizar o for (teste com 03)
+
+
+Test2 - com pragma 140
+	sem pragma 210
+	
+4_2_4
+tentamos primeiro com uma zona crtiica mas devido a estar dentro das iterações do for o overhead que adicionava era muito maior
+concluimos que uma soluçao seria criar uma zona paralela onde seria calculado para cada thread na sua parte do for um maximo local 
+Depois na zona critica onde so pode aceder uma thread de cada vez é recalculado o maximo global com todos os maximos locais das threads
+
+
+4.2.2
+Nunca ha dependencias pois as escritas sao sempre em lugares diferentes da memoria e nunca sao lidas, a mesma coisa para as leituras da surfaceCopy
+Logo apenas fazemos a paralelizacao do for privatizando a variavel do loop interior
+					
+				
+
